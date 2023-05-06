@@ -1,16 +1,18 @@
-from __future__ import annotations
+from typing import Union, Any
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
-    from unit import BaseUnit
+    from classes import UnitClass
 
 class Skill(ABC):
     """
     Базовый класс умения
     """
-    user = None
-    target = None
+    def __init__(self):
+        self.user = None
+        self.target = None
 
     @property
     @abstractmethod
@@ -34,7 +36,7 @@ class Skill(ABC):
     def _is_stamina_enough(self):
         return self.user.stamina > self.stamina
 
-    def use(self, user: BaseUnit, target: BaseUnit) -> str:
+    def use(self, user, target) -> str:
         """
         Проверка, достаточно ли выносливости у игрока для применения умения.
         Для вызова скилла везде используем просто use
@@ -47,22 +49,24 @@ class Skill(ABC):
 
 
 class FuryPunch(Skill):
-    name = ...
-    stamina = ...
-    damage = ...
+    name: str = 'Свирепый пинок'
+    stamina: float = 6
+    damage: float = 12
 
     def skill_effect(self):
-        # TODO логика использования скилла -> return str
-        # TODO в классе нам доступны экземпляры user и target - можно использовать любые их методы
-        # TODO именно здесь происходит уменшение стамины у игрока применяющего умение и
-        # TODO уменьшение здоровья цели.
-        # TODO результат применения возвращаем строкой
-        pass
+        self.user.stamina -= self.stamina
+        self.target.get_damage(self.damage)
+
+        return f'{self.user.name} использует {self.name} и наносит {self.damage} урона сопернику'
 
 class HardShot(Skill):
-    name = ...
-    stamina = ...
-    damage = ...
+    name: str = 'Мощный укол'
+    stamina: float = 6
+    damage: float = 12
 
     def skill_effect(self):
-        pass
+        self.user.stamina -= self.stamina
+        self.target.get_damage(self.damage)
+
+        return f'{self.user.name} использует {self.name} и наносит {self.damage} урона сопернику'
+
